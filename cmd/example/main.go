@@ -4,9 +4,7 @@ import (
 	"flag"
 	"fmt"
 	lab2 "github.com/roman-mazur/architecture-lab-2"
-	"io"
 	"os"
-	"strings"
 )
 
 var (
@@ -14,46 +12,6 @@ var (
 	inputFile       = flag.String("f", "", ".txt file with expression")
 	outputFile      = flag.String("o", "", ".txt file with output")
 )
-
-func provideOutput(outputDest string) (io.Writer, error) {
-	var output io.Writer
-	if outputDest == "" {
-		output = os.Stdout
-	} else {
-		file, err := os.Create(outputDest)
-		if err != nil {
-			return nil, fmt.Errorf("error creating output file: %w", err)
-		}
-		output = file
-	}
-
-	return output, nil
-}
-
-func provideInput(inputExpression, inputFile string) (io.Reader, error) {
-	var input io.Reader
-
-	if inputExpression != "" {
-		input = strings.NewReader(inputExpression)
-		return input, nil
-	}
-
-	if fileExists(inputFile) {
-		file, err := os.Open(inputFile)
-		if err != nil {
-			return nil, fmt.Errorf("error opening input file: %w", err)
-		}
-		input = file
-	} else {
-		input = strings.NewReader(inputFile)
-	}
-	return input, nil
-}
-
-func fileExists(filename string) bool {
-	_, err := os.Stat(filename)
-	return err == nil
-}
 
 func main() {
 	flag.Parse()
@@ -64,8 +22,8 @@ func main() {
 		fmt.Println("You can't provide both -e and -f at the same time")
 	}
 
-	input, _ := provideInput(*inputExpression, *inputFile)
-	output, _ := provideOutput(*outputFile)
+	input, _ := lab2.ProvideInput(*inputExpression, *inputFile)
+	output, _ := lab2.ProvideOutput(*outputFile)
 
 	handler := &lab2.ComputeHandler{Input: input, Output: output}
 
