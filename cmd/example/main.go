@@ -4,6 +4,9 @@ import (
 	"flag"
 	"fmt"
 	lab2 "github.com/roman-mazur/architecture-lab-2"
+	"io"
+	"os"
+	"strings"
 )
 
 var (
@@ -11,6 +14,46 @@ var (
 	inputFile       = flag.String("f", "", ".txt file with expression")
 	outputFile      = flag.String("o", "", ".txt file with output")
 )
+
+func provideOutput(outputDest string) (io.Writer, error) {
+	var output io.Writer
+	if outputDest == "" {
+		output = os.Stdout
+	} else {
+		file, err := os.Create(outputDest)
+		if err != nil {
+			return nil, fmt.Errorf("error creating output file: %w", err)
+		}
+		output = file
+	}
+
+	return output, nil
+}
+
+func provideInput(inputExpression, inputFile string) (io.Reader, error) {
+	var input io.Reader
+
+	if inputExpression != "" {
+		input = strings.NewReader(inputExpression)
+		return input, nil
+	}
+
+	if fileExists(inputFile) {
+		file, err := os.Open(inputFile)
+		if err != nil {
+			return nil, fmt.Errorf("error opening input file: %w", err)
+		}
+		input = file
+	} else {
+		input = strings.NewReader(inputFile)
+	}
+	return input, nil
+}
+
+func fileExists(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
+}
 
 func main() {
 	flag.Parse()
@@ -21,14 +64,14 @@ func main() {
 		fmt.Println("You can't provide both -e and -f at the same time")
 	}
 
-	// TODO: Change this to accept input from the command line arguments as described in the task and
-	//       output the results using the ComputeHandler instance.
-	//       handler := &lab2.ComputeHandler{
-	//           Input: {construct io.Reader according the command line parameters},
-	//           Output: {construct io.Writer according the command line parameters},
-	//       }
-	//       err := handler.Compute()
+	input, _ := provideInput(*inputExpression, *inputFile)
+	output, _ := provideOutput(*outputFile)
 
-	res, _ := lab2.PrefixToInfix("+ 2 2")
-	fmt.Println(res)
+	handler := &lab2.ComputeHandler{Input: input, Output: output}
+
+	err := handler.Compute()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }
