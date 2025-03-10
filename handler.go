@@ -6,15 +6,15 @@ import (
 	"io"
 )
 
-// ComputeHandler should be constructed with input io.Reader and output io.Writer.
-// Its Compute() method should read the expression from input and write the computed result to the output.
+// ComputeHandler should be constructed with Input io.Reader and Output io.Writer.
+// Its Compute() method should read the expression from Input and write the computed result to the Output.
 type ComputeHandler struct {
-	input  io.Reader
-	output io.Writer
+	Input  io.Reader
+	Output io.Writer
 }
 
 func (ch *ComputeHandler) Compute() error {
-	scanner := bufio.NewScanner(ch.input)
+	scanner := bufio.NewScanner(ch.Input)
 	if !scanner.Scan() {
 		return fmt.Errorf("Input Error")
 	}
@@ -25,6 +25,6 @@ func (ch *ComputeHandler) Compute() error {
 		return err1
 	}
 
-	_, err2 := fmt.Fprint(ch.output, transformedExpression)
+	_, err2 := fmt.Fprint(ch.Output, transformedExpression)
 	return err2
 }
