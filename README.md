@@ -1,4 +1,7 @@
-Шаблон для 2-гої роботи з архітектури ПЗ
+Architecture lab 2
 ---
-
-Використайте кнопку **"Use this template"**, щоб створити власний репозиторій.
+Authored by IM-31 students:
+- Maksym Zinets
+- Andrii Ivanchyshyn
+- Serhii Lytvynenko
+- Kateryna Prylutska
