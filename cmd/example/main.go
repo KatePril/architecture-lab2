@@ -8,11 +8,18 @@ import (
 
 var (
 	inputExpression = flag.String("e", "", "Expression to compute")
-	// TODO: Add other flags support for input and output configuration.
+	inputFile       = flag.String("f", "", ".txt file with expression")
+	outputFile      = flag.String("o", "", ".txt file with output")
 )
 
 func main() {
 	flag.Parse()
+	if *inputExpression == "" && *inputFile == "" {
+		fmt.Println("Please provide either expression using -e flag or file with expression using -f flag")
+	}
+	if *inputExpression != "" && *inputFile != "" {
+		fmt.Println("You can't provide both -e and -f at the same time")
+	}
 
 	// TODO: Change this to accept input from the command line arguments as described in the task and
 	//       output the results using the ComputeHandler instance.
