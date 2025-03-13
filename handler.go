@@ -16,7 +16,7 @@ type ComputeHandler struct {
 func (ch *ComputeHandler) Compute() error {
 	scanner := bufio.NewScanner(ch.Input)
 	if !scanner.Scan() {
-		return fmt.Errorf("Input Error")
+		return fmt.Errorf("input error")
 	}
 
 	expression := scanner.Text()
