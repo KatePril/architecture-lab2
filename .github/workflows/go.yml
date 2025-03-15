@@ -22,7 +22,9 @@ jobs:
       run: rm -rf out
 
     - name: Test
-      run: go test -v ./implementation_test.go
+      run: |
+          go test -v ./handler_test.go
+          go test -v ./implementation_test.go
     
     - name: Build
       run: |
