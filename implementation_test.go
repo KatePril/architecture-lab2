@@ -119,6 +119,29 @@ func TestPrefixToInfixComplex4(t *testing.T) {
 	}
 }
 
+func TestPrefixToInfixInvalidCharacter(t *testing.T) {
+	_, err := PrefixToInfix("- 2 b")
+	assert.EqualError(t, err, "Invalid character: b")
+}
+
+func TestPrefixToInfixLackOfCharacters(t *testing.T) {
+	defer func() {
+		err := recover()
+		assert.NotNil(t, err)
+	}()
+	_, err := PrefixToInfix("-")
+	assert.Error(t, err)
+}
+
+func TestPrefixToInfixEmptyString(t *testing.T) {
+	defer func() {
+		err := recover()
+		assert.NotNil(t, err)
+	}()
+	_, err := PrefixToInfix("")
+	assert.Error(t, err)
+}
+
 func ExamplePrefixToInfix() {
 	res, _ := PrefixToInfix("+ 1 2")
 	fmt.Println(res)
