@@ -15,7 +15,7 @@ const (
 	POW
 )
 
-var operators = map[byte]int {
+var operators = map[byte]int{
 	'+': PLUS,
 	'-': MINUS,
 	'*': MUL,
@@ -24,12 +24,12 @@ var operators = map[byte]int {
 }
 
 type Token struct {
-	kind int
+	kind   int
 	source string
 }
 
 type Component struct {
-	source string
+	source      string
 	isComposite bool
 }
 
@@ -53,12 +53,12 @@ func tokenize(source string) ([]Token, error) {
 	output := make([]Token, 0)
 	for index := len(source) - 1; index >= 0; index-- {
 		char := source[index]
-		if (char == ' ') {
+		if char == ' ' {
 			continue
 		}
 		kind, isOperator := operators[char]
 		if isOperator {
-			output = append(output, Token{ kind, string(char) })
+			output = append(output, Token{kind, string(char)})
 			continue
 		}
 		number := ""
@@ -76,8 +76,8 @@ func tokenize(source string) ([]Token, error) {
 		if !isValidInteger(number) {
 			return nil, errors.New("Invalid number: " + number)
 		}
-		index += 1;
-		output = append(output, Token{ NUMBER, number })
+		index += 1
+		output = append(output, Token{NUMBER, number})
 	}
 	return output, nil
 }
@@ -92,13 +92,13 @@ func PrefixToInfix(source string) (string, error) {
 	stack := make([]Component, 0)
 	for _, token := range tokens {
 		if token.kind == NUMBER {
-			stack = append(stack, Component{ token.source, false })
+			stack = append(stack, Component{token.source, false})
 			continue
 		}
 		length := len(stack)
-		operand1, operand2 := stack[length - 1], stack[length - 2]
+		operand1, operand2 := stack[length-1], stack[length-2]
 		operand1Str, operand2Str := operand1.source, operand2.source
-		if token.kind == MUL || token.kind == DIV {
+		if token.kind == MUL || token.kind == DIV || token.kind == POW {
 			if operand1.isComposite {
 				operand1Str = "(" + operand1Str + ")"
 			}
@@ -107,8 +107,8 @@ func PrefixToInfix(source string) (string, error) {
 			}
 		}
 		expression := operand1Str + " " + token.source + " " + operand2Str
-		stack[length - 2] = Component{ expression, true }
-		stack = stack[: length - 1]
+		stack[length-2] = Component{expression, true}
+		stack = stack[:length-1]
 	}
 	return stack[0].source, nil
 }
