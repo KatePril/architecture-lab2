@@ -2,6 +2,7 @@ package lab2
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -15,7 +16,7 @@ const (
 	POW
 )
 
-var operators = map[byte]int {
+var operators = map[byte]int{
 	'+': PLUS,
 	'-': MINUS,
 	'*': MUL,
@@ -24,7 +25,7 @@ var operators = map[byte]int {
 }
 
 type Token struct {
-	kind int
+	kind   int
 	source string
 }
 
@@ -34,7 +35,7 @@ func isAlpha(char byte) bool {
 
 func isValidInteger(number string) bool {
 	empty := len(number) == 0
-	startsWith0 := strings.HasPrefix(number, "0")
+	startsWith0 := strings.HasPrefix(number, "0") && len(number) > 1
 	startsWithMinus0 := strings.HasPrefix(number, "-0")
 	startsWithPlus0 := strings.HasPrefix(number, "+0")
 	if empty || startsWith0 || startsWithMinus0 || startsWithPlus0 {
@@ -48,12 +49,12 @@ func tokenize(source string) ([]Token, error) {
 	output := make([]Token, 0)
 	for index := len(source) - 1; index >= 0; index-- {
 		char := source[index]
-		if (char == ' ') {
+		if char == ' ' {
 			continue
 		}
 		kind, isOperator := operators[char]
 		if isOperator {
-			output = append(output, Token{ kind, string(char) })
+			output = append(output, Token{kind, string(char)})
 			continue
 		}
 		number := ""
@@ -71,8 +72,8 @@ func tokenize(source string) ([]Token, error) {
 		if !isValidInteger(number) {
 			return nil, errors.New("Invalid number: " + number)
 		}
-		index += 1;
-		output = append(output, Token{ NUMBER, number })
+		index += 1
+		output = append(output, Token{NUMBER, number})
 	}
 	return output, nil
 }
@@ -91,10 +92,13 @@ func PrefixToInfix(source string) (string, error) {
 			continue
 		}
 		length := len(stack)
-		operand1, operand2 := stack[length - 1], stack[length - 2]
+		if length-1 < 0 || length-2 < 0 {
+			return "", fmt.Errorf("incorrect input")
+		}
+		operand1, operand2 := stack[length-1], stack[length-2]
 		expression := operand1 + " " + token.source + " " + operand2
-		stack[length - 2] = expression
-		stack = stack[: length - 1]
+		stack[length-2] = expression
+		stack = stack[:length-1]
 	}
 	return stack[0], nil
 }
