@@ -113,9 +113,9 @@ func TestPrefixToInfixComplex3(t *testing.T) {
 }
 
 func TestPrefixToInfixComplex4(t *testing.T) {
-	res, err := PrefixToInfix("+ * - - 6 ^ 2 8 0 4 / / 6 ^ 9 4 2")
+	res, err := PrefixToInfix("+ * - - 6 ^ 2 8 0 4 / 6 + / 9 4 2")
 	if assert.Nil(t, err) {
-		assert.Equal(t, "(6 - 2 ^ 8 - 0) * 4 + 6 / (9 ^ 4) / 2", res)
+		assert.Equal(t, "(6 - 2 ^ 8 - 0) * 4 + 6 / (9 / 4 + 2)", res)
 	}
 }
 
