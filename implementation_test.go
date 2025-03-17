@@ -29,9 +29,9 @@ func TestPrefixToInfixSimple3(t *testing.T) {
 }
 
 func TestPrefixToInfixSimple4(t *testing.T) {
-	res, err := PrefixToInfix("- 4 + 5 8")
+	res, err := PrefixToInfix("- - 4 5 8")
 	if assert.Nil(t, err) {
-		assert.Equal(t, "4 - (5 + 8)", res)
+		assert.Equal(t, "4 - 5 - 8", res)
 	}
 }
 
@@ -92,9 +92,9 @@ func TestPrefixToInfixSimple12(t *testing.T) {
 }
 
 func TestPrefixToInfixComplex1(t *testing.T) {
-	res, err := PrefixToInfix("* - ^ - 6 2 8 0 + 4 / / 6 ^ 9 4 2")
+	res, err := PrefixToInfix("* - ^ - 6 2 8 0 + 4 + / 6 ^ 9 4 2")
 	if assert.Nil(t, err) {
-		assert.Equal(t, "((6 - 2) ^ 8 - 0) * (4 + 6 / (9 ^ 4) / 2)", res)
+		assert.Equal(t, "((6 - 2) ^ 8 - 0) * (4 + 6 / (9 ^ 4) + 2)", res)
 	}
 }
 
@@ -106,9 +106,9 @@ func TestPrefixToInfixComplex2(t *testing.T) {
 }
 
 func TestPrefixToInfixComplex3(t *testing.T) {
-	res, err := PrefixToInfix("+ - - * 63 3 * ^ 44 2 8 / 4 16 / * 4 1 94")
+	res, err := PrefixToInfix("+ - - * 63 3 * - 44 2 8 / 4 16 / + 4 1 94")
 	if assert.Nil(t, err) {
-		assert.Equal(t, "63 * 3 - 44 ^ 2 * 8 - 4 / 16 + 4 * 1 / 94", res)
+		assert.Equal(t, "63 * 3 - (44 - 2) * 8 - 4 / 16 + (4 + 1) / 94", res)
 	}
 }
 
