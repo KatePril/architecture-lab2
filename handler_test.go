@@ -10,7 +10,7 @@ import (
 )
 
 func TestCompute(t *testing.T) {
-	input := strings.NewReader("+ 5 * - 4 2 ^ 3 2")
+	input := strings.NewReader("/ 4 - 5 8")
 	output := new(bytes.Buffer)
 
 	handler := ComputeHandler{
@@ -21,7 +21,7 @@ func TestCompute(t *testing.T) {
 	err := handler.Compute()
 
 	assert.Nil(t, err)
-	assert.Equal(t, "5 + 4 - 2 * 3 ^ 2", output.String())
+	assert.Equal(t, "4 / (5 - 8)", output.String())
 }
 
 func TestCompute_WrongSyntax(t *testing.T) {
@@ -36,6 +36,7 @@ func TestCompute_WrongSyntax(t *testing.T) {
 	err := handler.Compute()
 
 	assert.NotNil(t, err)
+	assert.Equal(t, output.String(), "")
 }
 
 func TestCompute_EmptyString(t *testing.T) {
