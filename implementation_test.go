@@ -1,9 +1,11 @@
 package lab2
 
 import (
+	"fmt"
 	"testing"
-)
 
+	"github.com/stretchr/testify/assert"
+)
 
 func TestPrefixToInfixSimple1(t *testing.T) {
 	res, err := PrefixToInfix("- 1 2")
