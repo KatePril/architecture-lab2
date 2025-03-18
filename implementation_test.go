@@ -125,11 +125,8 @@ func TestPrefixToInfixInvalidCharacter(t *testing.T) {
 }
 
 func TestPrefixToInfixLackOfCharacters(t *testing.T) {
-	defer func() {
-		err := recover()
-		assert.NotNil(t, err)
-	}()
 	_, err := PrefixToInfix("-")
+	assert.NotNil(t, err)
 	assert.Error(t, err)
 }
 
