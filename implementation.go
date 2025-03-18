@@ -96,6 +96,9 @@ func PrefixToInfix(source string) (string, error) {
 			continue
 		}
 		length := len(stack)
+		if length-1 < 0 || length-2 < 0 {
+			return "", errors.New("incorrect input")
+		}
 		operand1, operand2 := stack[length-1], stack[length-2]
 		operand1Str, operand2Str := operand1.source, operand2.source
 		if token.kind == MUL || token.kind == DIV || token.kind == POW {
