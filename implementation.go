@@ -2,6 +2,7 @@ package lab2
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -39,7 +40,7 @@ func isAlpha(char byte) bool {
 
 func isValidInteger(number string) bool {
 	empty := len(number) == 0
-	startsWith0 := strings.HasPrefix(number, "0")
+	startsWith0 := strings.HasPrefix(number, "0") && len(number) > 1
 	startsWithMinus0 := strings.HasPrefix(number, "-0")
 	startsWithPlus0 := strings.HasPrefix(number, "+0")
 	if empty || startsWith0 || startsWithMinus0 || startsWithPlus0 {

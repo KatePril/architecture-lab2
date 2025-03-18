@@ -7,17 +7,145 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPrefixToInfix(t *testing.T) {
-	res, err := PrefixToInfix("+ 5 * - 4 2 3")
+func TestPrefixToInfixSimple1(t *testing.T) {
+	res, err := PrefixToInfix("- 1 2")
 	if assert.Nil(t, err) {
-		assert.Equal(t, "4 2 - 3 * 5 +", res)
+		assert.Equal(t, "1 - 2", res)
 	}
 }
 
+func TestPrefixToInfixSimple2(t *testing.T) {
+	res, err := PrefixToInfix("^ 1 3")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "1 ^ 3", res)
+	}
+}
+
+func TestPrefixToInfixSimple3(t *testing.T) {
+	res, err := PrefixToInfix("+ - 4 5 8")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "4 - 5 + 8", res)
+	}
+}
+
+func TestPrefixToInfixSimple4(t *testing.T) {
+	res, err := PrefixToInfix("- - 4 5 8")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "4 - 5 - 8", res)
+	}
+}
+
+func TestPrefixToInfixSimple5(t *testing.T) {
+	res, err := PrefixToInfix("* - 4 5 8")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "(4 - 5) * 8", res)
+	}
+}
+
+func TestPrefixToInfixSimple6(t *testing.T) {
+	res, err := PrefixToInfix("- * 4 5 8")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "4 * 5 - 8", res)
+	}
+}
+
+func TestPrefixToInfixSimple7(t *testing.T) {
+	res, err := PrefixToInfix("- 4 * 5 8")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "4 - 5 * 8", res)
+	}
+}
+
+func TestPrefixToInfixSimple8(t *testing.T) {
+	res, err := PrefixToInfix("* 4 - 5 8")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "4 * (5 - 8)", res)
+	}
+}
+
+func TestPrefixToInfixSimple9(t *testing.T) {
+	res, err := PrefixToInfix("- 4 / 5 8")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "4 - 5 / 8", res)
+	}
+}
+
+func TestPrefixToInfixSimple10(t *testing.T) {
+	res, err := PrefixToInfix("/ 4 - 5 8")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "4 / (5 - 8)", res)
+	}
+}
+
+func TestPrefixToInfixSimple11(t *testing.T) {
+	res, err := PrefixToInfix("^ / 4 5 8")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "(4 / 5) ^ 8", res)
+	}
+}
+
+func TestPrefixToInfixSimple12(t *testing.T) {
+	res, err := PrefixToInfix("^ 4 / 5 8")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "4 ^ (5 / 8)", res)
+	}
+}
+
+func TestPrefixToInfixComplex1(t *testing.T) {
+	res, err := PrefixToInfix("* - ^ - 6 2 8 0 + 4 + / 6 ^ 9 4 2")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "((6 - 2) ^ 8 - 0) * (4 + 6 / (9 ^ 4) + 2)", res)
+	}
+}
+
+func TestPrefixToInfixComplex2(t *testing.T) {
+	res, err := PrefixToInfix("- + 5 * - - - 5 4 * 6 5 ^ 4 2 1 3")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "5 + (5 - 4 - 6 * 5 - 4 ^ 2) * 1 - 3", res)
+	}
+}
+
+func TestPrefixToInfixComplex3(t *testing.T) {
+	res, err := PrefixToInfix("+ - - * 63 3 * - 44 2 8 / 4 16 / + 4 1 94")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "63 * 3 - (44 - 2) * 8 - 4 / 16 + (4 + 1) / 94", res)
+	}
+}
+
+func TestPrefixToInfixComplex4(t *testing.T) {
+	res, err := PrefixToInfix("+ * - - 6 ^ 2 8 0 4 / 6 + / 9 4 2")
+	if assert.Nil(t, err) {
+		assert.Equal(t, "(6 - 2 ^ 8 - 0) * 4 + 6 / (9 / 4 + 2)", res)
+	}
+}
+
+func TestPrefixToInfixInvalidCharacter(t *testing.T) {
+	_, err := PrefixToInfix("- 2 b")
+	assert.EqualError(t, err, "Invalid character: b")
+}
+
+func TestPrefixToInfixLackOfCharacters(t *testing.T) {
+	defer func() {
+		err := recover()
+		assert.NotNil(t, err)
+	}()
+	_, err := PrefixToInfix("-")
+	assert.Error(t, err)
+}
+
+func TestPrefixToInfixEmptyString(t *testing.T) {
+	defer func() {
+		err := recover()
+		assert.NotNil(t, err)
+	}()
+	_, err := PrefixToInfix("")
+	assert.Error(t, err)
+}
+
 func ExamplePrefixToInfix() {
-	res, _ := PrefixToInfix("+ 2 2")
+	res, _ := PrefixToInfix("+ 1 2")
 	fmt.Println(res)
 
 	// Output:
-	// 2 2 +
+	// 1 + 2
 }
