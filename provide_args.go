@@ -7,39 +7,33 @@ import (
 	"strings"
 )
 
-func ProvideOutput(outputDest string) (io.Writer, error) {
-	var output io.Writer
+func ProvideOutput(outputDest string) (io.Writer, io.Closer, error) {
 	if outputDest == "" {
-		output = os.Stdout
-	} else {
-		file, err := os.Create(outputDest)
-		if err != nil {
-			return nil, fmt.Errorf("error creating output file: %w", err)
-		}
-		output = file
+		return os.Stdout, nil, nil
+	}
+	file, err := os.Create(outputDest)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error creating output file: %w", err)
 	}
 
-	return output, nil
+	return file, file, nil
 }
 
-func ProvideInput(inputExpression, inputFile string) (io.Reader, error) {
-	var input io.Reader
+func ProvideInput(inputExpression, inputFile string) (io.Reader, io.Closer, error) {
 
 	if inputExpression != "" {
-		input = strings.NewReader(inputExpression)
-		return input, nil
+		return strings.NewReader(inputExpression), nil, nil
 	}
 
 	if fileExists(inputFile) {
 		file, err := os.Open(inputFile)
 		if err != nil {
-			return nil, fmt.Errorf("error opening input file: %w", err)
+			return nil, nil, fmt.Errorf("error opening input file: %w", err)
 		}
-		input = file
-	} else {
-		input = strings.NewReader(inputFile)
+		return file, file, nil
 	}
-	return input, nil
+	return nil, nil, fmt.Errorf("input file not found")
+
 }
 
 func fileExists(filename string) bool {

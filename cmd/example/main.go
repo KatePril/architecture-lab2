@@ -22,12 +22,22 @@ func main() {
 		fmt.Println("You can't provide both -e and -f at the same time")
 	}
 
-	input, _ := lab2.ProvideInput(*inputExpression, *inputFile)
-	output, _ := lab2.ProvideOutput(*outputFile)
+	input, inputCloser, _ := lab2.ProvideInput(*inputExpression, *inputFile)
+	output, outputCloser, _ := lab2.ProvideOutput(*outputFile)
 
 	handler := &lab2.ComputeHandler{Input: input, Output: output}
 
 	err := handler.Compute()
+	if inputCloser != nil {
+		finishError(inputCloser.Close())
+	}
+	if outputCloser != nil {
+		finishError(outputCloser.Close())
+	}
+	finishError(err)
+}
+
+func finishError(err error) {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
