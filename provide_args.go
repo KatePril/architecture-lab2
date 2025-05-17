@@ -7,42 +7,27 @@ import (
 	"strings"
 )
 
-func ProvideOutput(outputDest string) (io.Writer, error) {
-	var output io.Writer
+func ProvideOutput(outputDest string) (io.Writer, func() error, error) {
 	if outputDest == "" {
-		output = os.Stdout
-	} else {
-		file, err := os.Create(outputDest)
-		if err != nil {
-			return nil, fmt.Errorf("error creating output file: %w", err)
-		}
-		output = file
+		return os.Stdout, nil, nil
+	}
+	file, err := os.Create(outputDest)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error creating output file: %w", err)
 	}
 
-	return output, nil
+	return file, file.Close, nil
 }
 
-func ProvideInput(inputExpression, inputFile string) (io.Reader, error) {
-	var input io.Reader
-
+func ProvideInput(inputExpression, inputFile string) (io.Reader, func() error, error) {
 	if inputExpression != "" {
-		input = strings.NewReader(inputExpression)
-		return input, nil
+		return strings.NewReader(inputExpression), nil, nil
 	}
 
-	if fileExists(inputFile) {
-		file, err := os.Open(inputFile)
-		if err != nil {
-			return nil, fmt.Errorf("error opening input file: %w", err)
-		}
-		input = file
-	} else {
-		input = strings.NewReader(inputFile)
+	file, err := os.Open(inputFile)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error opening input file: %w", err)
 	}
-	return input, nil
-}
 
-func fileExists(filename string) bool {
-	_, err := os.Stat(filename)
-	return err == nil
+	return file, file.Close, nil
 }
