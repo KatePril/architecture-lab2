@@ -17,22 +17,28 @@ func main() {
 	flag.Parse()
 	if *inputExpression == "" && *inputFile == "" {
 		fmt.Println("Please provide either expression using -e flag or file with expression using -f flag")
+		os.Exit(1)
 	}
 	if *inputExpression != "" && *inputFile != "" {
 		fmt.Println("You can't provide both -e and -f at the same time")
+		os.Exit(1)
 	}
 
-	input, inputCloser, _ := lab2.ProvideInput(*inputExpression, *inputFile)
-	output, outputCloser, _ := lab2.ProvideOutput(*outputFile)
+	input, inputCloseCallback, _ := lab2.ProvideInput(*inputExpression, *inputFile)
+	if input == nil {
+		fmt.Println("Please provide a valid expression using -e flag or existing file with expression using -f flag")
+		os.Exit(1)
+	}
+	output, outputCloseCallback, _ := lab2.ProvideOutput(*outputFile)
 
 	handler := &lab2.ComputeHandler{Input: input, Output: output}
 
 	err := handler.Compute()
-	if inputCloser != nil {
-		finishError(inputCloser.Close())
+	if inputCloseCallback != nil {
+		finishError(inputCloseCallback())
 	}
-	if outputCloser != nil {
-		finishError(outputCloser.Close())
+	if outputCloseCallback != nil {
+		finishError(outputCloseCallback())
 	}
 	finishError(err)
 }
